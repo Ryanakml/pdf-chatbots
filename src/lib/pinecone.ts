@@ -95,7 +95,11 @@ async function prepareDocument(page: PDFPage) {
   let { pageContent, metadata } = page;
   pageContent = pageContent.replace(/\n/g, " ");
 
-  const splitter = new RecursiveCharacterTextSplitter();
+  // Use sensible chunking to retain context while keeping chunks LLM-friendly
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1200,
+    chunkOverlap: 200,
+  });
   const docs = await splitter.splitDocuments([
     new Document({
       pageContent,
